@@ -21,20 +21,10 @@ let buildApp staticFilesPath : WebPart =
         basicApp staticFileRoot
         pageNotFound staticFileRoot
     ] >=> log logger logFormat
-    |> ApplicationInsights.withRequestTracking ApplicationInsights.buildApiOperationName
 
 [<EntryPoint>]
 let main [| port; staticFilesLocation |] =
     Configuration.Azure.applyAzureEnvironmentToConfigurationManager()
-    Tracing.Azure.addAzureAppServicesTraceListeners()
-    ApplicationInsights.startMonitoring
-        { AppInsightsKey = Helpers.getSetting "AppInsightsKey"
-          DeveloperMode = false
-          TrackDependencies = true }
-    startTracing()    
-    
-    Trace.TraceInformation (sprintf "Static Files Location: %s" staticFilesLocation)
-    Trace.TraceInformation (sprintf "AppInsightsKey = %s" (Helpers.getSetting "AppInsightsKey"))
 
     let config =
         { defaultConfig with
